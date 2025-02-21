@@ -25,3 +25,10 @@ func DBConnection(config *Config) *gorm.DB {
 	log.Println("Database connected")
 	return db
 }
+
+func DBCloseConnection(db *gorm.DB) {
+	if db != nil {
+		dbSQL, _ := db.DB()
+		dbSQL.Close()
+	}
+}
