@@ -1,32 +1,17 @@
 package model
 
-import (
-	"time"
-
-	constant "github.com/deigo96/bpkp/app/internal/const"
-	"github.com/deigo96/bpkp/app/internal/entity"
-)
-
-type Users struct {
-	ID        int `gorm:"primaryKey"`
-	Email     string
-	Password  string
-	Role      constant.Role
-	IsActive  bool
-	CreatedAt *time.Time
-	CreatedBy string
-	UpdatedAt *time.Time
-	UpdatedBy string
+type UserResponse struct {
+	Email     string `json:"email"`
+	IsActive  bool   `json:"is_active"`
+	Role      string `json:"role"`
+	CreatedAt string `json:"created_at"`
+	CreatedBy string `json:"created_by"`
+	UpdatedAt string `json:"updated_at"`
+	UpdatedBy string `json:"updated_by"`
 }
 
-func (u *Users) ToEntity() *entity.UserResponse {
-	return &entity.UserResponse{
-		Email:     u.Email,
-		IsActive:  u.IsActive,
-		Role:      u.Role.String(),
-		CreatedAt: u.CreatedAt.String(),
-		CreatedBy: u.CreatedBy,
-		UpdatedAt: u.UpdatedAt.String(),
-		UpdatedBy: u.UpdatedBy,
-	}
+type CreateUserRequest struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+	Role     string `json:"role"`
 }

@@ -3,8 +3,8 @@ package main
 import (
 	"log"
 
-	"github.com/deigo96/bpkp/app"
-	"github.com/deigo96/bpkp/app/config"
+	"github.com/deigo96/itineris/app"
+	"github.com/deigo96/itineris/app/config"
 	"github.com/gin-gonic/gin"
 )
 

@@ -1,8 +1,8 @@
 package app
 
 import (
-	"github.com/deigo96/bpkp/app/config"
-	"github.com/deigo96/bpkp/app/internal/handler"
+	"github.com/deigo96/itineris/app/config"
+	"github.com/deigo96/itineris/app/internal/handler"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )

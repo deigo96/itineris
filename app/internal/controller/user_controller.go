@@ -3,7 +3,7 @@ package controller
 import (
 	"net/http"
 
-	"github.com/deigo96/bpkp/app/internal/service"
+	"github.com/deigo96/itineris/app/internal/service"
 	"github.com/gin-gonic/gin"
 )
 

@@ -1,9 +1,9 @@
 package handler
 
 import (
-	"github.com/deigo96/bpkp/app/config"
-	"github.com/deigo96/bpkp/app/internal/controller"
-	"github.com/deigo96/bpkp/app/internal/service"
+	"github.com/deigo96/itineris/app/config"
+	"github.com/deigo96/itineris/app/internal/controller"
+	"github.com/deigo96/itineris/app/internal/service"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )

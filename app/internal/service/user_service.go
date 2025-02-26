@@ -3,14 +3,14 @@ package service
 import (
 	"context"
 
-	"github.com/deigo96/bpkp/app/config"
-	"github.com/deigo96/bpkp/app/internal/entity"
-	"github.com/deigo96/bpkp/app/internal/repository"
+	"github.com/deigo96/itineris/app/config"
+	"github.com/deigo96/itineris/app/internal/model"
+	"github.com/deigo96/itineris/app/internal/repository"
 	"gorm.io/gorm"
 )
 
 type UserService interface {
-	GetUsers(context.Context) ([]entity.UserResponse, error)
+	GetUsers(context.Context) ([]model.UserResponse, error)
 }
 
 type userService struct {
@@ -27,21 +27,29 @@ func NewUserService(db *gorm.DB, config *config.Config) UserService {
 	}
 }
 
-func (s *userService) GetUsers(c context.Context) ([]entity.UserResponse, error) {
+func (s *userService) GetUsers(c context.Context) ([]model.UserResponse, error) {
 	users, err := s.UserRepository.GetUsers(c, s.db)
 	if err != nil {
 		return nil, err
 	}
 
-	usersResponse := make([]entity.UserResponse, 0)
+	usersResponse := make([]model.UserResponse, 0)
 	if users == nil {
 		return usersResponse, nil
 	}
 
 	for _, user := range users {
-		userResponse := user.ToEntity()
+		userResponse := user.ToModel()
 		usersResponse = append(usersResponse, *userResponse)
 	}
 
 	return usersResponse, nil
 }
+
+// func (s *userService) CreateUser(c context.Context, user *model.CreateUserRequest) (*model.UserResponse, error) {
+
+// }
+
+// func (s *userService) constructCreateUser(c context.Context, user *model.CreateUserRequest) (*model.Users, error) {
+
+// }
