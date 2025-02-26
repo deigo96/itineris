@@ -9,6 +9,8 @@ import (
 
 type EmployeeRepository interface {
 	GetEmployees(context.Context, *gorm.DB) ([]entity.Employee, error)
+	GetEmployeeByNip(context.Context, *gorm.DB, string) (*entity.Employee, error)
+	GetEmployeeByID(context.Context, *gorm.DB, int) (*entity.Employee, error)
 	CreateUser(context.Context, *gorm.DB, *entity.Employee) (*entity.Employee, error)
 }
 
@@ -25,6 +27,24 @@ func (r *employeeRepository) GetEmployees(c context.Context, db *gorm.DB) ([]ent
 	}
 
 	return employees, nil
+}
+
+func (r *employeeRepository) GetEmployeeByNip(c context.Context, db *gorm.DB, nip string) (*entity.Employee, error) {
+	employee := &entity.Employee{}
+	if err := db.Where("nip = ?", nip).First(&employee).Error; err != nil {
+		return nil, err
+	}
+
+	return employee, nil
+}
+
+func (r *employeeRepository) GetEmployeeByID(c context.Context, db *gorm.DB, id int) (*entity.Employee, error) {
+	employee := &entity.Employee{}
+	if err := db.Where("id = ?", id).First(&employee).Error; err != nil {
+		return nil, err
+	}
+
+	return employee, nil
 }
 
 func (r *employeeRepository) CreateUser(c context.Context, db *gorm.DB, employee *entity.Employee) (*entity.Employee, error) {

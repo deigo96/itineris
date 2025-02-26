@@ -14,7 +14,7 @@ func main() {
 	configuration := config.GetConfig()
 	db := config.DBConnection(configuration)
 
-	v1 := r.Group("/v1")
+	v1 := r.Group("/api/v1")
 
 	app.NewHandler(configuration, db, v1)
 

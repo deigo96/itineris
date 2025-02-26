@@ -10,6 +10,7 @@ type Config struct {
 	ServiceName string
 	ServiceHost string
 	ServicePort string
+	SecretKey   string
 	DBConfig
 }
 
@@ -31,6 +32,7 @@ func GetConfig() *Config {
 		ServiceName: os.Getenv("SERVICE_NAME"),
 		ServiceHost: os.Getenv("SERVICE_HOST"),
 		ServicePort: os.Getenv("SERVICE_PORT"),
+		SecretKey:   os.Getenv("SECRET_KEY"),
 
 		DBConfig: DBConfig{
 			DbHost:     os.Getenv("DB_HOST"),

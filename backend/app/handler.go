@@ -10,4 +10,5 @@ import (
 func NewHandler(config *config.Config, db *gorm.DB, router *gin.RouterGroup) {
 
 	handler.NewEmployeeHandler(config, db, router)
+	handler.NewAuthHandler(config, db, router)
 }
