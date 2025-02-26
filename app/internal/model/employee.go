@@ -1,13 +1,15 @@
 package model
 
 type EmployeeResponse struct {
-	Email     string `json:"email"`
-	IsActive  bool   `json:"is_active"`
-	Role      string `json:"role"`
-	CreatedAt string `json:"created_at"`
-	CreatedBy string `json:"created_by"`
-	UpdatedAt string `json:"updated_at"`
-	UpdatedBy string `json:"updated_by"`
+	ID           int    `json:"id"`
+	Name         string `json:"name"`
+	NIP          string `json:"nip"`
+	LeaveBalance int32  `json:"leave_balance"`
+	Role         string `json:"role"`
+	CreatedAt    string `json:"created_at"`
+	CreatedBy    string `json:"created_by"`
+	UpdatedAt    string `json:"updated_at"`
+	UpdatedBy    string `json:"updated_by"`
 }
 
 type CreateUserRequest struct {

@@ -12,8 +12,8 @@ func NewEmployeeHandler(config *config.Config, db *gorm.DB, router *gin.RouterGr
 	employeeService := service.NewEmployeService(db, config)
 
 	employeeController := controller.NewEmployeeController(employeeService)
-	userRoute := router.Group("/users")
+	employee := router.Group("/employees")
 
-	userRoute.GET("", employeeController.Get)
+	employee.GET("", employeeController.Get)
 
 }

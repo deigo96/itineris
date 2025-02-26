@@ -3,15 +3,13 @@ package constant
 type Role int
 
 const (
-	SUPER Role = iota + 1
-	ADMIN
-	USER
+	PPK Role = iota + 1
+	Staff
 )
 
 var roleName = map[Role]string{
-	SUPER: "super",
-	ADMIN: "admin",
-	USER:  "user",
+	PPK:   "Pejabat Pembina Kepegawaian",
+	Staff: "Staff",
 }
 
 func (r Role) String() string {
@@ -24,5 +22,5 @@ func GetRole(role string) Role {
 			return k
 		}
 	}
-	return USER
+	return Staff
 }
