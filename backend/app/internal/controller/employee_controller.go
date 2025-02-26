@@ -1,7 +1,8 @@
 package controller
 
 import (
-	"net/http"
+	customError "github.com/deigo96/itineris/app/internal/error"
+	"github.com/deigo96/itineris/app/internal/util"
 
 	"github.com/deigo96/itineris/app/internal/service"
 	"github.com/gin-gonic/gin"
@@ -16,11 +17,10 @@ func NewEmployeeController(userService service.EmployeeService) EmployeeControll
 }
 
 func (c *EmployeeController) Get(ctx *gin.Context) {
-	employees, err := c.EmployeeService.GetEmployees(ctx.Request.Context())
+	employee, err := c.EmployeeService.GetEmployee(ctx)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{
-			"error": err,
-		})
+		customError.ErrorResponse(err, ctx)
+		return
 	}
-	ctx.JSON(200, employees)
+	ctx.JSON(200, util.SuccessResponse(employee))
 }

@@ -38,6 +38,7 @@ func Authorization(config *config.Config) gin.HandlerFunc {
 			c.Set("nip", claims["nip"])
 			c.Set("id", claims["id"])
 			c.Set("role", claims["role"])
+
 			c.Next()
 		}
 	}

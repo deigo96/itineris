@@ -2,15 +2,20 @@ package service
 
 import (
 	"context"
+	"errors"
 
 	"github.com/deigo96/itineris/app/config"
+	customError "github.com/deigo96/itineris/app/internal/error"
 	"github.com/deigo96/itineris/app/internal/model"
 	"github.com/deigo96/itineris/app/internal/repository"
+	"github.com/deigo96/itineris/app/internal/util"
+	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
 type EmployeeService interface {
 	GetEmployees(context.Context) ([]model.EmployeeResponse, error)
+	GetEmployee(*gin.Context) (*model.EmployeeResponse, error)
 }
 
 type employeeService struct {
@@ -46,10 +51,16 @@ func (s *employeeService) GetEmployees(c context.Context) ([]model.EmployeeRespo
 	return employeeResponses, nil
 }
 
-// func (s *employeeService) CreateUser(c context.Context, user *model.CreateUserRequest) (*model.EmployeeResponse, error) {
+func (s *employeeService) GetEmployee(c *gin.Context) (*model.EmployeeResponse, error) {
+	ctx := util.GetContext(c)
 
-// }
+	employee, err := s.EmployeeRepository.GetEmployeeByID(c, s.db, ctx.ID)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, customError.ErrNotFound
+		}
+		return nil, err
+	}
 
-// func (s *employeeService) constructCreateUser(c context.Context, user *model.CreateUserRequest) (*model.Users, error) {
-
-// }
+	return employee.ToModel(), nil
+}

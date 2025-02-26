@@ -1,6 +1,10 @@
 package util
 
-import "context"
+import (
+	"context"
+
+	"github.com/gin-gonic/gin"
+)
 
 type Context struct {
 	ID   int
@@ -8,11 +12,24 @@ type Context struct {
 	Role string
 }
 
-func GetContext(c context.Context) Context {
-	id := c.Value("id").(int)
-	nip := c.Value("nip").(string)
-	role := c.Value("role").(string)
-	return Context{ID: id, Nip: nip, Role: role}
+func GetContext(c *gin.Context) Context {
+	id, exist := c.Get("id")
+	if !exist {
+		return Context{}
+	}
+	nip, exist := c.Get("nip")
+	if !exist {
+		return Context{}
+	}
+
+	role, exist := c.Get("role")
+	if !exist {
+		return Context{}
+	}
+
+	newId := id.(float64)
+
+	return Context{ID: int(newId), Nip: nip.(string), Role: role.(string)}
 }
 
 func GetContexID(c context.Context) int {
