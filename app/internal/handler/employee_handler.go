@@ -8,12 +8,12 @@ import (
 	"gorm.io/gorm"
 )
 
-func NewUserHandler(config *config.Config, db *gorm.DB, router *gin.RouterGroup) {
-	userService := service.NewUserService(db, config)
+func NewEmployeeHandler(config *config.Config, db *gorm.DB, router *gin.RouterGroup) {
+	employeeService := service.NewEmployeService(db, config)
 
-	userController := controller.NewUserController(userService)
+	employeeController := controller.NewEmployeeController(employeeService)
 	userRoute := router.Group("/users")
 
-	userRoute.GET("", userController.Get)
+	userRoute.GET("", employeeController.Get)
 
 }

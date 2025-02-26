@@ -9,5 +9,5 @@ import (
 
 func NewHandler(config *config.Config, db *gorm.DB, router *gin.RouterGroup) {
 
-	handler.NewUserHandler(config, db, router)
+	handler.NewEmployeeHandler(config, db, router)
 }

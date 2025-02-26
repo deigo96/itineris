@@ -1,6 +1,6 @@
 package model
 
-type UserResponse struct {
+type EmployeeResponse struct {
 	Email     string `json:"email"`
 	IsActive  bool   `json:"is_active"`
 	Role      string `json:"role"`

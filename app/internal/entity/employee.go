@@ -8,7 +8,7 @@ import (
 	"github.com/deigo96/itineris/app/internal/model"
 )
 
-type Users struct {
+type Employee struct {
 	ID        int `gorm:"primaryKey"`
 	Email     string
 	Password  string
@@ -20,8 +20,8 @@ type Users struct {
 	UpdatedBy string
 }
 
-func (u *Users) ToModel() *model.UserResponse {
-	return &model.UserResponse{
+func (u *Employee) ToModel() *model.EmployeeResponse {
+	return &model.EmployeeResponse{
 		Email:     u.Email,
 		IsActive:  u.IsActive,
 		Role:      u.Role.String(),
@@ -32,8 +32,8 @@ func (u *Users) ToModel() *model.UserResponse {
 	}
 }
 
-func (u *Users) CreateUserToEntity(c context.Context, user *model.CreateUserRequest) *Users {
-	return &Users{
+func (u *Employee) CreateUserToEntity(c context.Context, user *model.CreateUserRequest) *Employee {
+	return &Employee{
 		Email:     user.Email,
 		Password:  user.Password,
 		Role:      constant.GetRole(user.Role),
