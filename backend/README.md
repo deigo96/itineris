@@ -75,27 +75,27 @@ This is a **simple Leave Request API** that allows employees to request leave, c
 - **Description:** Login to get the token.
 - **Headers:**
   ```json
-  {
-    "Content-Type": "application/json"
-  }
+    {
+        "Content-Type": "application/json"
+    }
   ```
 - **Request Body:**
   ```json
-	{
-    "nip": "1234567", //numeric, required
-    "password": "12345678" //required
-	}
+    {
+        "nip": "1234567", //numeric, required
+        "password": "12345678" //required
+    }
   ```
 - **Response:**
   ```json
-	{
-		"code": "2000",
-		"message": "success",
-		"data": {
-			"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDA3NTc1NTMsImlkIjoyLCJuaXAiOiIxMjM0NTY3Iiwicm9sZSI6IlN0YWZmIn0.17lfvpQ1p-nCG_LRfCBclI8sNJ5DAMsafB7RwrwVuyM",
-			"token_type": "Bearer"
-		}
-	}
+    {
+        "code": "2000",
+        "message": "success",
+        "data": {
+            "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDA3NTc1NTMsImlkIjoyLCJuaXAiOiIxMjM0NTY3Iiwicm9sZSI6IlN0YWZmIn0.17lfvpQ1p-nCG_LRfCBclI8sNJ5DAMsafB7RwrwVuyM",
+            "token_type": "Bearer"
+        }
+    }
   ```
 
 ### 📌 Create Leave Request
