@@ -20,18 +20,20 @@ type EmployeeService interface {
 }
 
 type employeeService struct {
-	EmployeeRepository repository.EmployeeRepository
-	db                 *gorm.DB
-	config             *config.Config
-	repository         repository.Repository
+	EmployeeRepository     repository.EmployeeRepository
+	db                     *gorm.DB
+	config                 *config.Config
+	repository             repository.Repository
+	leaveRequestRepository repository.LeaveRequestRepository
 }
 
 func NewEmployeService(db *gorm.DB, config *config.Config) EmployeeService {
 	return &employeeService{
-		EmployeeRepository: repository.NewEmployeeRepository(),
-		db:                 db,
-		config:             config,
-		repository:         repository.NewRepository(),
+		EmployeeRepository:     repository.NewEmployeeRepository(),
+		db:                     db,
+		config:                 config,
+		repository:             repository.NewRepository(),
+		leaveRequestRepository: repository.NewLeaveRequestRepository(),
 	}
 }
 
@@ -47,7 +49,9 @@ func (s *employeeService) GetEmployees(c context.Context) ([]model.EmployeeRespo
 	}
 
 	for _, user := range users {
-		employeeResponse := user.ToModel()
+		totalPending := s.leaveRequestRepository.CountPendingRequest(c, s.db, user.ID, true)
+
+		employeeResponse := user.ToModel(int(totalPending))
 		employeeResponses = append(employeeResponses, *employeeResponse)
 	}
 
@@ -65,7 +69,9 @@ func (s *employeeService) GetEmployee(c *gin.Context) (*model.EmployeeResponse, 
 		return nil, err
 	}
 
-	return employee.ToModel(), nil
+	totalPending := s.leaveRequestRepository.CountPendingRequest(c, s.db, employee.ID, ctx.IsAdmin())
+
+	return employee.ToModel(int(totalPending)), nil
 }
 
 func (s *employeeService) GetLeaveType(c *gin.Context) ([]model.LeaveTypeResponse, error) {

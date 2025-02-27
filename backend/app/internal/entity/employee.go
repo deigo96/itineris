@@ -21,17 +21,18 @@ type Employee struct {
 	UpdatedBy    string
 }
 
-func (u *Employee) ToModel() *model.EmployeeResponse {
+func (u *Employee) ToModel(totalPending int) *model.EmployeeResponse {
 	return &model.EmployeeResponse{
-		ID:           u.ID,
-		Name:         u.Name,
-		NIP:          u.Nip,
-		Role:         u.RoleId.String(),
-		LeaveBalance: u.LeaveBalance,
-		CreatedAt:    u.CreatedAt.String(),
-		CreatedBy:    u.CreatedBy,
-		UpdatedAt:    u.UpdatedAt.String(),
-		UpdatedBy:    u.UpdatedBy,
+		ID:                  u.ID,
+		Name:                u.Name,
+		NIP:                 u.Nip,
+		Role:                u.RoleId.String(),
+		LeaveBalance:        u.LeaveBalance,
+		TotalPendingRequest: totalPending,
+		CreatedAt:           u.CreatedAt.String(),
+		CreatedBy:           u.CreatedBy,
+		UpdatedAt:           u.UpdatedAt.String(),
+		UpdatedBy:           u.UpdatedBy,
 	}
 }
 

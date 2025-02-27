@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 
+	constant "github.com/deigo96/itineris/app/internal/const"
 	"github.com/deigo96/itineris/app/internal/entity"
 	"gorm.io/gorm"
 )
@@ -12,6 +13,8 @@ type LeaveRequestRepository interface {
 	UpdateLeaveRequest(context.Context, *gorm.DB, int, *entity.UpdateLeaveRequest) error
 	GetLeaveRequestByID(context.Context, *gorm.DB, int, int, bool) (*entity.LeaveRequest, error)
 	GetLeaveRequests(context.Context, *gorm.DB, bool, int) ([]*entity.LeaveRequest, error)
+	CountPendingRequest(
+		c context.Context, db *gorm.DB, employeeID int, isAdmin bool) int64
 }
 
 type leaveRequestRepository struct{}
@@ -72,4 +75,17 @@ func (r *leaveRequestRepository) GetLeaveRequests(
 	}
 	return leaveRequests, nil
 
+}
+
+func (r *leaveRequestRepository) CountPendingRequest(
+	c context.Context, db *gorm.DB, employeeID int, isAdmin bool) int64 {
+
+	var total int64
+	if !isAdmin {
+		db.Model(&entity.LeaveRequest{}).Where("employee_id = ? AND status = ?", employeeID, constant.PENDING).Count(&total)
+	} else {
+		db.Model(&entity.LeaveRequest{}).Where("status = ?", constant.PENDING).Count(&total)
+	}
+
+	return total
 }
