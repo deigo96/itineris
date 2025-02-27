@@ -1,35 +1,47 @@
-# 🚀 Project Name
+# Leave Request API
 
-> A simple application to manage leave requests 
-
-## 📌 Prerequisites
-
-Ensure you have the following installed on your system:
-
-- **Go** (Version 1.x) → [Install Go](https://go.dev/dl/)
-- **Database** (PostgreSQL, MySQL, etc.)
-- **Environment Variables** (Configured in `.env` file)
-
----
-
-## ⚙️ Installation
-
-### **1️⃣ Install Go**
-Make sure Go is installed. You can check by running:
-
-```sh
-go version
-```
-
-If Go is not installed, download it [here](https://go.dev/dl/).
+## \ud83d\udccc Table of Contents
+- [\ud83d\udcda Introduction](#introduction)
+- [\ud83d\udee0\ufe0f Installation](#installation)
+- [\u2699\ufe0f Environment Setup](#environment-setup)
+- [\ud83d\udcc2 Database & Service Configuration](#database--service-configuration)
+- [\ud83d\udcdd API Endpoints](#api-endpoints)
+  - [Create Leave Request](#create-leave-request)
+  - [Get Leave Balance](#get-leave-balance)
+- [\ud83d\ude80 Running the Service](#running-the-service)
 
 ---
 
-### **2️⃣ Create a `.env` File**
-Inside the root directory, create a `.env` file and add your environment variables:
+## \ud83d\udcda Introduction
+This is a **simple Leave Request API** that allows employees to request leave, check leave balances, and manage approvals.
 
-```ini
-SERVICE_NAME=""
+---
+
+## \ud83d\udee0\ufe0f Installation
+1. Install **Go** (latest version) \u2192 [Download Go](https://go.dev/doc/install)
+2. Clone this repository:
+   ```sh
+   git clone https://github.com/deigo96/itineris.git
+   ```
+3. Navigate to the project directory:
+   ```sh
+   cd itineris/backend
+   ```
+4. Install dependencies:
+   ```sh
+   go mod tidy
+   ```
+
+---
+
+## \u2699\ufe0f Environment Setup
+1. Create a `.env` file:
+   ```sh
+   touch .env
+   ```
+2. Add your environment variables:
+   ```env
+   SERVICE_NAME=""
 SERVICE_HOST=""
 SERVICE_PORT=""
 SECRET_KEY=""
@@ -41,86 +53,72 @@ DB_PORT=""
 DB_USER=""
 DB_NAME=""
 DB_PASSWORD=""
-```
-
-> ⚠️ **Note:** Make sure to update these values according to your setup.
+   ```
 
 ---
 
-### **3️⃣ Configure the Database & Services**
-- Start your database PostgreSQL
-- Ensure the database user has the required permissions.
+## \ud83d\udcc2 Database & Service Configuration
+1. Import the database schema:
+   ```sh
+   psql -U postgres -d leave_db -f schema.sql
+   ```
+2. Configure the service in `config.yaml`.
 
 ---
 
-### **4️⃣ Import the SQL Schema**
-Run the following command to initialize your database:
+## \ud83d\udcdd API Endpoints
 
-```sh
-psql -U your_user -d your_database -f schema.sql
-```
+### \ud83d\udccc **Create Leave Request**
+- **Endpoint:** `POST /leave`
+- **Description:** Submit a leave request.
+- **Headers:**
+  ```json
+  {
+    "Authorization": "Bearer <token>",
+    "Content-Type": "application/json"
+  }
+  ```
+- **Request Body:**
+  ```json
+  {
+    "start_date": "2024-02-01",
+    "end_date": "2024-02-05",
+    "reason": "Vacation",
+    "leave_type": 1
+  }
+  ```
+- **Response:**
+  ```json
+  {
+    "message": "Leave request submitted successfully"
+  }
+  ```
+
+### \ud83d\udccc **Get Leave Balance**
+- **Endpoint:** `GET /leave/balance`
+- **Description:** Retrieves the available leave balance for the logged-in user.
+- **Headers:**
+  ```json
+  {
+    "Authorization": "Bearer <token>"
+  }
+  ```
+- **Response:**
+  ```json
+  {
+    "leave_balance": 12
+  }
+  ```
 
 ---
 
-### **5️⃣ Install Dependencies**
-Run:
-
-```sh
-go mod tidy
-```
-
-This will fetch and install all necessary dependencies.
-
----
-
-### **6️⃣ Run the Service**
-To start the service, execute:
-
+## \ud83d\ude80 Running the Service
+Run the application using:
 ```sh
 go run main.go
 ```
-
-or build and run:
-
-```sh
-go build -o app && ./app
+Then open the API at:
 ```
-
-The service should now be running on `http://localhost:8080` 🎉.
-
----
-
-## 📄 API Endpoints
-
-| Method | Endpoint       | Description        |
-|--------|--------------|------------------|
-| `GET`  | `/ping`      | Health check    |
-| `POST` | `/login`     | User login      |
-| `POST` | `/logout`    | User logout     |
-
----
-
-## 🛠 Troubleshooting
-
-- **Error: `no such file or directory: .env`**  
-  👉 Make sure the `.env` file is created and correctly configured.
-
-- **Error: `database connection failed`**  
-  👉 Ensure your database is running and credentials are correct.
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome! Feel free to submit issues and pull requests.
-
----
-
-## 📜 License
-
-This project is licensed under the **MIT License**.
-
----
-
-### 🎯 **Happy Coding!** 🚀
+http://localhost:8080
+```
 
