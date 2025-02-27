@@ -1,6 +1,6 @@
 # 🚀 Project Name
 
-> A short description of your project.
+> A simple application to manage leave requests 
 
 ## 📌 Prerequisites
 
