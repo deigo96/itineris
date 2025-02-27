@@ -17,5 +17,6 @@ func NewEmployeeHandler(config *config.Config, db *gorm.DB, router *gin.RouterGr
 	employee.Use(middleware.Authorization(config))
 
 	employee.GET("", employeeController.Get)
+	employee.GET("/leave-type", employeeController.GetLeaveType)
 
 }

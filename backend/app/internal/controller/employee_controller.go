@@ -24,3 +24,13 @@ func (c *EmployeeController) Get(ctx *gin.Context) {
 	}
 	ctx.JSON(200, util.SuccessResponse(employee))
 }
+
+func (c *EmployeeController) GetLeaveType(ctx *gin.Context) {
+	res, err := c.EmployeeService.GetLeaveType(ctx)
+	if err != nil {
+		customError.ErrorResponse(err, ctx)
+		return
+	}
+
+	ctx.JSON(200, util.SuccessResponse(res))
+}
