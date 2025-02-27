@@ -22,6 +22,7 @@ type LeaveRequestService interface {
 	LeaveRequest(c *gin.Context, req *model.LeaveRequestRequest) error
 	Approval(c *gin.Context, req *model.ApprovalRequest) error
 	GetLeaveRequests(c *gin.Context) ([]model.LeaveRequestResponse, error)
+	GetLeaveRequest(c *gin.Context, id int) (*model.LeaveRequestResponse, error)
 }
 
 type leaveRequestService struct {
@@ -232,4 +233,26 @@ func (s *leaveRequestService) GetLeaveRequests(c *gin.Context) ([]model.LeaveReq
 	}
 
 	return leaveRequestResponse, nil
+}
+
+func (s *leaveRequestService) GetLeaveRequest(c *gin.Context, id int) (*model.LeaveRequestResponse, error) {
+	user := util.GetContext(c)
+
+	response, err := s.leaveRequestRepository.GetLeaveRequestByID(c, s.db, user.ID, id, user.IsAdmin())
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, customError.ErrNotFound
+		}
+		return nil, err
+	}
+
+	leaveType, err := s.repository.GetLeaveTypeByID(c, s.db, response.LeaveType)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, customError.ErrNotFound
+		}
+		return nil, err
+	}
+
+	return response.ToModel(leaveType.TypeName), nil
 }

@@ -14,7 +14,7 @@ type Context struct {
 }
 
 func (c Context) IsAdmin() bool {
-	return c.Nip == constant.PPK.String()
+	return c.Role == constant.PPK.String()
 }
 
 func GetContext(c *gin.Context) Context {

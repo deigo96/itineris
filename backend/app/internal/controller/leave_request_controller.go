@@ -2,6 +2,7 @@ package controller
 
 import (
 	"fmt"
+	"strconv"
 
 	customError "github.com/deigo96/itineris/app/internal/error"
 	"github.com/deigo96/itineris/app/internal/model"
@@ -73,4 +74,21 @@ func (c *LeaveRequestController) GetLeaveRequests(ctx *gin.Context) {
 	}
 
 	ctx.JSON(200, util.SuccessResponse(responses))
+}
+
+func (c *LeaveRequestController) GetLeaveRequest(ctx *gin.Context) {
+	paramID := ctx.Param("id")
+	id, err := strconv.Atoi(paramID)
+	if err != nil || id == 0 {
+		customError.ErrorResponse(customError.ErrBadRequest, ctx)
+		return
+	}
+
+	response, err := c.LeaveRequestService.GetLeaveRequest(ctx, id)
+	if err != nil {
+		customError.ErrorResponse(err, ctx)
+		return
+	}
+
+	ctx.JSON(200, util.SuccessResponse(response))
 }

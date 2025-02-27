@@ -19,4 +19,5 @@ func NewLeaveRequestHandler(config *config.Config, db *gorm.DB, router *gin.Rout
 	leaveRequest.POST("", leaveRequestController.LeaveRequest)
 	leaveRequest.POST("/action", leaveRequestController.Action)
 	leaveRequest.GET("", leaveRequestController.GetLeaveRequests)
+	leaveRequest.GET("/:id", leaveRequestController.GetLeaveRequest)
 }
