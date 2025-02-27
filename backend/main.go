@@ -19,7 +19,7 @@ func main() {
 	app.NewHandler(configuration, db, v1)
 
 	log.Println("Service " + configuration.ServiceName + " running on port " + configuration.ServicePort)
-	r.Run(configuration.ServiceHost + ":" + configuration.ServicePort)
+	r.Run(configuration.ServicePort)
 
 	config.DBCloseConnection(db)
 }
