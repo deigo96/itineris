@@ -13,6 +13,7 @@ type EmployeeRepository interface {
 	GetEmployeeByID(context.Context, *gorm.DB, int) (*entity.Employee, error)
 	CreateUser(context.Context, *gorm.DB, *entity.Employee) (*entity.Employee, error)
 	UpdateBalance(context.Context, *gorm.DB, int, int) error
+	RestoreBalance(context.Context, *gorm.DB, int, int) error
 }
 
 type employeeRepository struct{}
@@ -60,6 +61,19 @@ func (r *employeeRepository) UpdateBalance(c context.Context, db *gorm.DB, total
 	query := `
 	UPDATE employees
 	SET leave_balance = leave_balance - ?
+	WHERE id = ?
+	`
+	if err := db.Exec(query, totalRequest, ID).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (r *employeeRepository) RestoreBalance(c context.Context, db *gorm.DB, totalRequest, ID int) error {
+	query := `
+	UPDATE employees
+	SET leave_balance = leave_balance + ?
 	WHERE id = ?
 	`
 	if err := db.Exec(query, totalRequest, ID).Error; err != nil {

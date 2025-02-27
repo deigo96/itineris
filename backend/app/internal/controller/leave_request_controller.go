@@ -42,3 +42,25 @@ func (c *LeaveRequestController) LeaveRequest(ctx *gin.Context) {
 	ctx.JSON(200, util.SuccessResponse(nil))
 
 }
+
+func (c *LeaveRequestController) Action(ctx *gin.Context) {
+	var req model.ApprovalRequest
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		customError.ErrorResponse(err, ctx)
+		return
+	}
+
+	validate = validator.New()
+	if err := validate.Struct(req); err != nil {
+		customError.ErrorResponse(err, ctx)
+		return
+	}
+
+	err := c.LeaveRequestService.Approval(ctx, &req)
+	if err != nil {
+		customError.ErrorResponse(err, ctx)
+		return
+	}
+
+	ctx.JSON(200, util.SuccessResponse(nil))
+}

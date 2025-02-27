@@ -17,4 +17,5 @@ func NewLeaveRequestHandler(config *config.Config, db *gorm.DB, router *gin.Rout
 	leaveRequest.Use(middleware.Authorization(config))
 
 	leaveRequest.POST("", leaveRequestController.LeaveRequest)
+	leaveRequest.POST("/action", leaveRequestController.Action)
 }

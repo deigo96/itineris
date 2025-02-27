@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/deigo96/itineris/app/config"
+	constant "github.com/deigo96/itineris/app/internal/const"
 	"github.com/deigo96/itineris/app/internal/entity"
 	customError "github.com/deigo96/itineris/app/internal/error"
 	"github.com/deigo96/itineris/app/internal/model"
@@ -19,6 +20,7 @@ import (
 
 type LeaveRequestService interface {
 	LeaveRequest(c *gin.Context, req *model.LeaveRequestRequest) error
+	Approval(c *gin.Context, req *model.ApprovalRequest) error
 }
 
 type leaveRequestService struct {
@@ -78,6 +80,7 @@ func (s *leaveRequestService) process(c context.Context, totalRequest int, req *
 		return err
 	}
 
+	req.TotalDays = totalRequest
 	_, err = s.leaveRequestRepository.StoreLeaveRequest(c, tx, req)
 	if err != nil {
 		tx.Rollback()
@@ -115,4 +118,86 @@ func (s *leaveRequestService) validateLeaveRequest(
 	}
 
 	return int(totalRequest + 1), nil
+}
+
+func (s *leaveRequestService) Approval(c *gin.Context, req *model.ApprovalRequest) error {
+	ctx := util.GetContext(c)
+
+	employee, err := s.employeeRepository.GetEmployeeByID(c, s.db, ctx.ID)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return customError.ErrNotFound
+		}
+
+		return err
+	}
+
+	var isAdmin bool = true
+	if employee.RoleId != constant.PPK {
+		return customError.ErrUnauthorized
+	}
+
+	leaveRequest, err := s.leaveRequestRepository.GetLeaveRequestByID(c, s.db, employee.ID, req.ID, isAdmin)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return customError.ErrNotFound
+		}
+
+		return err
+	}
+
+	if !leaveRequest.IsPending() {
+		return customError.ErrLeaveRequestHasBeenProcessed
+	}
+
+	switch req.ApprovalStatus {
+	case constant.APPROVE:
+		return s.approve(c, req)
+	case constant.REJECT:
+		return s.reject(c, leaveRequest, req)
+	default:
+		return customError.ErrInvalidApprovalStatus
+	}
+
+}
+
+func (s *leaveRequestService) approve(c *gin.Context, req *model.ApprovalRequest) error {
+	user := util.GetContext(c)
+	approvalRequest := &entity.UpdateLeaveRequest{
+		Status:    constant.Status(req.ApprovalStatus.String()),
+		UpdatedBy: user.Nip,
+	}
+
+	return s.leaveRequestRepository.UpdateLeaveRequest(c, s.db, req.ID, approvalRequest)
+}
+
+func (s *leaveRequestService) reject(c *gin.Context, leaveRequest *entity.LeaveRequest, req *model.ApprovalRequest) (err error) {
+	user := util.GetContext(c)
+
+	approvalRequest := &entity.UpdateLeaveRequest{
+		Status:        constant.Status(req.ApprovalStatus.String()),
+		UpdatedBy:     user.Nip,
+		RejectionNote: req.RejectionNote,
+	}
+
+	tx := s.db.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			log.Println(r)
+			err = r.(error)
+			tx.Rollback()
+		}
+	}()
+
+	if err := s.leaveRequestRepository.UpdateLeaveRequest(c, tx, req.ID, approvalRequest); err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	if err := s.employeeRepository.RestoreBalance(c, tx, int(leaveRequest.TotalDays), leaveRequest.EmployeeID); err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	return tx.Commit().Error
 }

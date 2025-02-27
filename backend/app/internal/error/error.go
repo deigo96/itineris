@@ -49,6 +49,14 @@ func NewError(message string) *Error {
 		err.Code = 4008
 		err.HttpCode = http.StatusBadRequest
 		err.Message = message
+	case ErrLeaveRequestHasBeenProcessed.Error():
+		err.Code = 4009
+		err.HttpCode = http.StatusBadRequest
+		err.Message = message
+	case ErrInvalidApprovalStatus.Error():
+		err.Code = 4010
+		err.HttpCode = http.StatusBadRequest
+		err.Message = message
 	default:
 		err.Code = 5001
 		err.HttpCode = http.StatusInternalServerError

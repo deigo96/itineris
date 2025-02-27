@@ -21,6 +21,13 @@ type LeaveRequest struct {
 	CreatedBy     string
 	UpdatedAt     *time.Time
 	UpdatedBy     string
+	TotalDays     int
+}
+
+type UpdateLeaveRequest struct {
+	Status        constant.Status
+	RejectionNote string
+	UpdatedBy     string
 }
 
 func (l *LeaveRequest) ToEntity(req *model.LeaveRequestRequest) {
@@ -33,4 +40,8 @@ func (l *LeaveRequest) ToEntity(req *model.LeaveRequestRequest) {
 	l.Reason = req.Reason
 	l.Status = status
 	l.LeaveType = req.LeaveType
+}
+
+func (l *LeaveRequest) IsPending() bool {
+	return l.Status == constant.PENDING
 }
