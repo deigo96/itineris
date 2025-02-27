@@ -14,6 +14,8 @@ func main() {
 	configuration := config.GetConfig()
 	db := config.DBConnection(configuration)
 
+	app.HandlePageNotFound(r)
+	app.HandleNoMethod(r)
 	v1 := r.Group("/api/v1")
 
 	app.NewHandler(configuration, db, v1)
