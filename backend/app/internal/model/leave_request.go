@@ -25,7 +25,7 @@ type LeaveRequestResponse struct {
 }
 
 type ApprovalRequest struct {
-	ID             int               `json:"id"`
+	ID             int               `json:"id" validate:"required"`
 	ApprovalStatus constant.Approval `json:"status" validate:"required"`
 	RejectionNote  string            `json:"rejection_note"`
 }

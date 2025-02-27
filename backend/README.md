@@ -98,46 +98,196 @@ This is a **simple Leave Request API** that allows employees to request leave, c
     }
   ```
 
-### 📌 Create Leave Request
-- **Endpoint:** `POST /leave`
-- **Description:** Submit a leave request.
+### 📌 Get Employee
+- **Endpoint:** `GET {{url}}/employees`
+- **Description:** Get current employee.
 - **Headers:**
   ```json
-  {
-    "Authorization": "Bearer <token>",
-    "Content-Type": "application/json"
-  }
+    {
+        "Authorization": "Bearer <token>",
+        "Content-Type": "application/json"
+    }
+  ```
+
+- **Response:**
+  ```json
+    {
+        "code": "2000",
+        "message": "success",
+        "data": {
+            "id": 2,
+            "name": "siahaan",
+            "nip": "1234567",
+            "leave_balance": 12,
+            "role": "Staff",
+            "total_pending_request": 0,
+            "created_at": "2025-02-27 16:27:54.401362 +0700 +07",
+            "created_by": "postgres",
+            "updated_at": "2025-02-27 16:27:54.401362 +0700 +07",
+            "updated_by": "postgres"
+        }
+    }
+  ```
+
+### 📌 Get Leave Type
+- **Endpoint:** `GET {{url}}/employees/leave-type`
+- **Description:** Get leave types.
+- **Headers:**
+  ```json
+    {
+        "Authorization": "Bearer <token>",
+        "Content-Type": "application/json"
+    }
+  ```
+
+- **Response:**
+  ```json
+    {
+        "code": "2000",
+        "message": "success",
+        "data": [
+            {
+                "id": 1,
+                "type_name": "Cuti Tahunan"
+            },
+            {
+                "id": 2,
+                "type_name": "Cuti Besar"
+            }
+        ]
+    }
+  ```
+
+### 📌 Store Leave Request
+- **Endpoint:** `POST {{url}}/leave-requests`
+- **Description:** Submit leave request.
+- **Headers:**
+  ```json
+    {
+        "Authorization": "Bearer <token>",
+        "Content-Type": "application/json"
+    }
   ```
 - **Request Body:**
   ```json
-  {
-    "start_date": "2024-02-01",
-    "end_date": "2024-02-05",
-    "reason": "Vacation",
-    "leave_type": 1
-  }
+    {
+        "start_date": "2025-02-28", //required
+        "end_date": "2025-03-01", //required
+        "reason": "sakit", //required
+        "leave_type": 1 //required
+    }
   ```
 - **Response:**
   ```json
-  {
-    "message": "Leave request submitted successfully"
-  }
+    {
+        "code": "2000",
+        "message": "success",
+        "data": null
+    }
   ```
 
-### 📌 Get Leave Balance
-- **Endpoint:** `GET /leave/balance`
-- **Description:** Retrieves the available leave balance for the logged-in user.
+### 📌 Get Histories Leave Request
+- **Endpoint:** `GET /leave-requests`
+- **Description:** Retrieves all leave requests.
 - **Headers:**
   ```json
-  {
-    "Authorization": "Bearer <token>"
-  }
+    {
+        "Authorization": "Bearer <token>"
+    }
   ```
 - **Response:**
   ```json
-  {
-    "leave_balance": 12
-  }
+    {
+        "code": "2000",
+        "message": "success",
+        "data": [
+            {
+                "id": 13,
+                "employee_id": 2,
+                "status": "pending",
+                "start_date": "2025-02-28",
+                "end_date": "2025-03-01",
+                "reason": "sakit",
+                "rejection_note": "",
+                "total_days": 2,
+                "leave_type": "Cuti Tahunan",
+                "created_at": "2025-02-27 22:57:01"
+            },
+            {
+                "id": 12,
+                "employee_id": 2,
+                "status": "rejected",
+                "start_date": "2025-02-28",
+                "end_date": "2025-03-01",
+                "reason": "sakit",
+                "rejection_note": "",
+                "total_days": 2,
+                "leave_type": "Cuti Tahunan",
+                "created_at": "2025-02-27 16:28:37"
+            }
+        ]
+    }
+  ```
+
+
+
+### 📌 Get 1 History Leave Request
+- **Endpoint:** `GET /leave-requests/{id}`
+- **Description:** Retrieves leave request by id.
+- **Headers:**
+  ```json
+    {
+        "Authorization": "Bearer <token>"
+    }
+  ```
+- **Response:**
+  ```json
+    {
+        "code": "2000",
+        "message": "success",
+        "data": {
+            "id": 12,
+            "employee_id": 2,
+            "status": "rejected",
+            "start_date": "2025-02-28",
+            "end_date": "2025-03-01",
+            "reason": "sakit",
+            "rejection_note": "",
+            "total_days": 2,
+            "leave_type": "Cuti Tahunan",
+            "created_at": "2025-02-27 16:28:37"
+        }
+    }
+  ```
+
+### 📌 Approval Action
+- **Endpoint:** `POST {{url}}/leave-requests/action`
+- **Description:** Action to approve or reject request.
+- **Notes:**
+    - Approve = 1
+    - Reject = 2
+- **Headers:**
+  ```json
+    {
+        "Authorization": "Bearer <token>",
+        "Content-Type": "application/json"
+    }
+  ```
+- **Request Body:**
+  ```json
+    {
+        "id": 9, // required
+        "status": 2, // required
+        "rejection_note": "" // optional
+    }
+  ```
+- **Response:**
+  ```json
+    {
+        "code": "2000",
+        "message": "success",
+        "data": null
+    }
   ```
 
 ---
