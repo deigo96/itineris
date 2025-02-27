@@ -21,6 +21,7 @@ import (
 type LeaveRequestService interface {
 	LeaveRequest(c *gin.Context, req *model.LeaveRequestRequest) error
 	Approval(c *gin.Context, req *model.ApprovalRequest) error
+	GetLeaveRequests(c *gin.Context) ([]model.LeaveRequestResponse, error)
 }
 
 type leaveRequestService struct {
@@ -28,6 +29,7 @@ type leaveRequestService struct {
 	config                 *config.Config
 	leaveRequestRepository repository.LeaveRequestRepository
 	employeeRepository     repository.EmployeeRepository
+	repository             repository.Repository
 }
 
 func NewLeaveRequestService(db *gorm.DB, config *config.Config) LeaveRequestService {
@@ -36,6 +38,7 @@ func NewLeaveRequestService(db *gorm.DB, config *config.Config) LeaveRequestServ
 		config:                 config,
 		leaveRequestRepository: repository.NewLeaveRequestRepository(),
 		employeeRepository:     repository.NewEmployeeRepository(),
+		repository:             repository.NewRepository(),
 	}
 }
 
@@ -200,4 +203,33 @@ func (s *leaveRequestService) reject(c *gin.Context, leaveRequest *entity.LeaveR
 	}
 
 	return tx.Commit().Error
+}
+
+func (s *leaveRequestService) GetLeaveRequests(c *gin.Context) ([]model.LeaveRequestResponse, error) {
+	user := util.GetContext(c)
+
+	responses, err := s.leaveRequestRepository.GetLeaveRequests(c, s.db, user.IsAdmin(), user.ID)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, customError.ErrNotFound
+		}
+		return nil, err
+	}
+
+	leaveRequestResponse := make([]model.LeaveRequestResponse, 0)
+
+	for _, response := range responses {
+		leaveType, err := s.repository.GetLeaveTypeByID(c, s.db, response.LeaveType)
+		if err != nil {
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				return nil, customError.ErrNotFound
+			}
+			return nil, err
+		}
+		res := response.ToModel(leaveType.TypeName)
+
+		leaveRequestResponse = append(leaveRequestResponse, *res)
+	}
+
+	return leaveRequestResponse, nil
 }

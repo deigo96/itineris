@@ -11,6 +11,19 @@ type LeaveRequestRequest struct {
 	LeaveType int    `json:"leave_type" validate:"required"`
 }
 
+type LeaveRequestResponse struct {
+	ID            int    `json:"id"`
+	EmployeeID    int    `json:"employee_id"`
+	Status        string `json:"status"`
+	StartDate     string `json:"start_date"`
+	EndDate       string `json:"end_date"`
+	Reason        string `json:"reason"`
+	RejectionNote string `json:"rejection_note"`
+	TotalDays     int    `json:"total_days"`
+	LeaveType     string `json:"leave_type"`
+	CreatedAt     string `json:"created_at"`
+}
+
 type ApprovalRequest struct {
 	ID             int               `json:"id"`
 	ApprovalStatus constant.Approval `json:"status" validate:"required"`

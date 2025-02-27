@@ -3,6 +3,7 @@ package util
 import (
 	"context"
 
+	constant "github.com/deigo96/itineris/app/internal/const"
 	"github.com/gin-gonic/gin"
 )
 
@@ -10,6 +11,10 @@ type Context struct {
 	ID   int
 	Nip  string
 	Role string
+}
+
+func (c Context) IsAdmin() bool {
+	return c.Nip == constant.PPK.String()
 }
 
 func GetContext(c *gin.Context) Context {

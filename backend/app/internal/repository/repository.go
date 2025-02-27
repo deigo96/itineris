@@ -9,6 +9,7 @@ import (
 
 type Repository interface {
 	GetLeaveType(c context.Context, db *gorm.DB, isPns bool) ([]entity.LeaveType, error)
+	GetLeaveTypeByID(c context.Context, db *gorm.DB, id int) (*entity.LeaveType, error)
 }
 
 type repository struct{}
@@ -32,4 +33,13 @@ func (r *repository) GetLeaveType(c context.Context, db *gorm.DB, isPns bool) ([
 	}
 
 	return leaveType, nil
+}
+
+func (r *repository) GetLeaveTypeByID(c context.Context, db *gorm.DB, id int) (*entity.LeaveType, error) {
+	var res entity.LeaveType
+	if err := db.Where("id = ?", id).First(&res).Error; err != nil {
+		return nil, err
+	}
+
+	return &res, nil
 }

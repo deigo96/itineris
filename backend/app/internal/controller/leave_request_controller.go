@@ -64,3 +64,13 @@ func (c *LeaveRequestController) Action(ctx *gin.Context) {
 
 	ctx.JSON(200, util.SuccessResponse(nil))
 }
+
+func (c *LeaveRequestController) GetLeaveRequests(ctx *gin.Context) {
+	responses, err := c.LeaveRequestService.GetLeaveRequests(ctx)
+	if err != nil {
+		customError.ErrorResponse(err, ctx)
+		return
+	}
+
+	ctx.JSON(200, util.SuccessResponse(responses))
+}
