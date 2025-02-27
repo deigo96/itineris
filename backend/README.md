@@ -68,7 +68,7 @@ This is a **simple Leave Request API** that allows employees to request leave, c
 
 ## 📝 API Endpoints
 
-### 📌 **Create Leave Request**
+### 📌 Create Leave Request
 - **Endpoint:** `POST /leave`
 - **Description:** Submit a leave request.
 - **Headers:**
@@ -94,7 +94,7 @@ This is a **simple Leave Request API** that allows employees to request leave, c
   }
   ```
 
-### 📌 **Get Leave Balance**
+### 📌 Get Leave Balance
 - **Endpoint:** `GET /leave/balance`
 - **Description:** Retrieves the available leave balance for the logged-in user.
 - **Headers:**
