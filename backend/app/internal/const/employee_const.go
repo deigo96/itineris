@@ -2,6 +2,8 @@ package constant
 
 type Role int
 
+const SYSTEM = "SYSTEM"
+
 const (
 	PPK Role = iota + 1
 	Staff

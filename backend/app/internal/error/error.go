@@ -37,6 +37,18 @@ func NewError(message string) *Error {
 		err.Code = 4005
 		err.HttpCode = http.StatusUnauthorized
 		err.Message = message
+	case ErrLeaveBalance.Error():
+		err.Code = 4006
+		err.HttpCode = http.StatusBadRequest
+		err.Message = message
+	case ErrLeaveType.Error():
+		err.Code = 4007
+		err.HttpCode = http.StatusBadRequest
+		err.Message = message
+	case ErrTimeLeaveRequest.Error():
+		err.Code = 4008
+		err.HttpCode = http.StatusBadRequest
+		err.Message = message
 	default:
 		err.Code = 5001
 		err.HttpCode = http.StatusInternalServerError
