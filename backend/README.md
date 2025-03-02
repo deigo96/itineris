@@ -121,6 +121,8 @@ This is a **simple Leave Request API** that allows employees to request leave, c
             "leave_balance": 12,
             "role": "Staff",
             "total_pending_request": 0,
+            "position": "PNS - Staff Backend Developer",
+            "department": "Teknologi Informasi",
             "created_at": "2025-02-27 16:27:54.401362 +0700 +07",
             "created_by": "postgres",
             "updated_at": "2025-02-27 16:27:54.401362 +0700 +07",
