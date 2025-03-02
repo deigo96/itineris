@@ -7,6 +7,8 @@ type EmployeeResponse struct {
 	LeaveBalance        int32  `json:"leave_balance"`
 	Role                string `json:"role"`
 	TotalPendingRequest int    `json:"total_pending_request"`
+	Position            string `json:"position"`
+	Department          string `json:"department"`
 	CreatedAt           string `json:"created_at"`
 	CreatedBy           string `json:"created_by"`
 	UpdatedAt           string `json:"updated_at"`

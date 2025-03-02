@@ -15,6 +15,8 @@ type Employee struct {
 	RoleId       constant.Role
 	LeaveBalance int32
 	IsPns        bool
+	Position     string
+	Department   string
 	CreatedAt    *time.Time
 	CreatedBy    string
 	UpdatedAt    *time.Time
@@ -29,9 +31,11 @@ func (u *Employee) ToModel(totalPending int) *model.EmployeeResponse {
 		Role:                u.RoleId.String(),
 		LeaveBalance:        u.LeaveBalance,
 		TotalPendingRequest: totalPending,
-		CreatedAt:           u.CreatedAt.String(),
+		Position:            u.Position,
+		Department:          u.Department,
+		CreatedAt:           u.CreatedAt.Format("2006-01-02 15:04:05"),
 		CreatedBy:           u.CreatedBy,
-		UpdatedAt:           u.UpdatedAt.String(),
+		UpdatedAt:           u.UpdatedAt.Format("2006-01-02 15:04:05"),
 		UpdatedBy:           u.UpdatedBy,
 	}
 }
