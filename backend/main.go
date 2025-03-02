@@ -9,10 +9,14 @@ import (
 )
 
 func main() {
-	r := gin.Default()
 
 	configuration := config.GetConfig()
 	db := config.DBConnection(configuration)
+
+	if configuration.Environment == "PRODUCTION" {
+		gin.SetMode(gin.ReleaseMode)
+	}
+	r := gin.Default()
 
 	app.HandlePageNotFound(r)
 	app.HandleNoMethod(r)
