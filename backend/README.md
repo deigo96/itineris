@@ -98,6 +98,51 @@ This is a **simple Leave Request API** that allows employees to request leave, c
     }
   ```
 
+### 📌 Create Employee
+- **Endpoint:** `POST {{url}}/employees`
+- **Description:** Just for create account manually.
+- **Headers:**
+  ```json
+    {
+        "Authorization": "Bearer <token>",
+        "Content-Type": "application/json"
+    }
+  ```
+- **Request Body:**
+  ```json
+    {
+      "name": "test", //required
+      "nip": "123456789", //required, numeric
+      "password": "12345678", //required
+      "role": "Staff", //required, (staff or ppk)
+      "position": "Staff", //required
+      "department": "Human Resource", //required
+      "leave_balance": 12, //required
+      "is_pns": true //required
+    }
+  ```
+- **Response:**
+  ```json
+    {
+      "code": "2000",
+      "message": "success",
+      "data": {
+        "id": 4,
+        "name": "test",
+        "nip": "123456789",
+        "leave_balance": 12,
+        "role": "Staff",
+        "total_pending_request": 0,
+        "position": "Staff",
+        "department": "Human Resource",
+        "created_at": "2025-03-03 21:34:29",
+        "created_by": "12345678",
+        "updated_at": "2025-03-03 21:34:29",
+        "updated_by": "12345678"
+      }
+    }
+  ```
+
 ### 📌 Get Employee
 - **Endpoint:** `GET {{url}}/employees`
 - **Description:** Get current employee.
