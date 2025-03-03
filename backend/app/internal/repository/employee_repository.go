@@ -11,7 +11,7 @@ type EmployeeRepository interface {
 	GetEmployees(context.Context, *gorm.DB) ([]entity.Employee, error)
 	GetEmployeeByNip(context.Context, *gorm.DB, string) (*entity.Employee, error)
 	GetEmployeeByID(context.Context, *gorm.DB, int) (*entity.Employee, error)
-	CreateUser(context.Context, *gorm.DB, *entity.Employee) (*entity.Employee, error)
+	CreateEmployee(context.Context, *gorm.DB, *entity.Employee) (*entity.Employee, error)
 	UpdateBalance(context.Context, *gorm.DB, int, int) error
 	RestoreBalance(context.Context, *gorm.DB, int, int) error
 }
@@ -49,7 +49,7 @@ func (r *employeeRepository) GetEmployeeByID(c context.Context, db *gorm.DB, id 
 	return employee, nil
 }
 
-func (r *employeeRepository) CreateUser(c context.Context, db *gorm.DB, employee *entity.Employee) (*entity.Employee, error) {
+func (r *employeeRepository) CreateEmployee(c context.Context, db *gorm.DB, employee *entity.Employee) (*entity.Employee, error) {
 	if err := db.Create(&employee).Error; err != nil {
 		return nil, err
 	}

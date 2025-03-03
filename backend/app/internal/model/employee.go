@@ -15,8 +15,13 @@ type EmployeeResponse struct {
 	UpdatedBy           string `json:"updated_by"`
 }
 
-type CreateUserRequest struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
-	Role     string `json:"role"`
+type CreateEmployeeRequest struct {
+	Name         string `json:"name" validate:"required"`
+	NIP          string `json:"nip" validate:"required,numeric"`
+	Password     string `json:"password" validate:"required"`
+	Role         string `json:"role" validate:"required"`
+	Position     string `json:"position" validate:"required"`
+	Department   string `json:"department" validate:"required"`
+	LeaveBalance int32  `json:"leave_balance" validate:"required"`
+	IsPNS        bool   `json:"is_pns" validate:"required"`
 }

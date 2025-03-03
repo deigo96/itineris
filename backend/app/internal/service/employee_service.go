@@ -3,8 +3,10 @@ package service
 import (
 	"context"
 	"errors"
+	"strings"
 
 	"github.com/deigo96/itineris/app/config"
+	"github.com/deigo96/itineris/app/internal/entity"
 	customError "github.com/deigo96/itineris/app/internal/error"
 	"github.com/deigo96/itineris/app/internal/model"
 	"github.com/deigo96/itineris/app/internal/repository"
@@ -17,6 +19,7 @@ type EmployeeService interface {
 	GetEmployees(context.Context) ([]model.EmployeeResponse, error)
 	GetEmployee(*gin.Context) (*model.EmployeeResponse, error)
 	GetLeaveType(*gin.Context) ([]model.LeaveTypeResponse, error)
+	CreateEmployee(c *gin.Context, req *model.CreateEmployeeRequest) (*model.EmployeeResponse, error)
 }
 
 type employeeService struct {
@@ -35,6 +38,34 @@ func NewEmployeService(db *gorm.DB, config *config.Config) EmployeeService {
 		repository:             repository.NewRepository(),
 		leaveRequestRepository: repository.NewLeaveRequestRepository(),
 	}
+}
+
+func (s *employeeService) CreateEmployee(c *gin.Context, req *model.CreateEmployeeRequest) (*model.EmployeeResponse, error) {
+	user := util.GetContext(c)
+
+	if err := s.validateCreateEmployee(user, req); err != nil {
+		return nil, err
+	}
+	password, err := util.HashPassword(req.Password)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Password = password
+
+	employeeEntity := &entity.Employee{
+		CreatedBy: user.Nip,
+		UpdatedBy: user.Nip,
+	}
+
+	employeeEntity.ToEntity(req)
+
+	employee, err := s.EmployeeRepository.CreateEmployee(c, s.db, employeeEntity)
+	if err != nil {
+		return nil, err
+	}
+
+	return employee.ToModel(0), nil
 }
 
 func (s *employeeService) GetEmployees(c context.Context) ([]model.EmployeeResponse, error) {
@@ -96,4 +127,26 @@ func (s *employeeService) GetLeaveType(c *gin.Context) ([]model.LeaveTypeRespons
 	}
 
 	return leaveTypeResponses, nil
+}
+
+func (s *employeeService) validateCreateEmployee(c util.Context, req *model.CreateEmployeeRequest) error {
+	if !c.IsAdmin() {
+		return customError.ErrUnauthorized
+	}
+
+	employee, err := s.EmployeeRepository.GetEmployeeByNip(context.Background(), s.db, req.NIP)
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		return err
+	}
+
+	if employee != nil {
+		return customError.ErrNipAlreadyUsed
+	}
+
+	_, err = s.repository.GetRole(context.Background(), s.db, strings.ToUpper(req.Role))
+	if err != nil {
+		return customError.ErrInvalidRole
+	}
+
+	return nil
 }

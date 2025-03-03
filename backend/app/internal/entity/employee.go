@@ -40,13 +40,13 @@ func (u *Employee) ToModel(totalPending int) *model.EmployeeResponse {
 	}
 }
 
-// func (u *Employee) CreateUserToEntity(c context.Context, user *model.CreateUserRequest) *Employee {
-// 	return &Employee{
-// 		Email:     user.Email,
-// 		Password:  user.Password,
-// 		Role:      constant.GetRole(user.Role),
-// 		IsActive:  true,
-// 		CreatedBy: "",
-// 		UpdatedBy: "",
-// 	}
-// }
+func (e *Employee) ToEntity(req *model.CreateEmployeeRequest) {
+	e.Nip = req.NIP
+	e.Name = req.Name
+	e.Password = req.Password
+	e.RoleId = constant.GetRole(req.Role)
+	e.LeaveBalance = req.LeaveBalance
+	e.IsPns = req.IsPNS
+	e.Position = req.Position
+	e.Department = req.Department
+}

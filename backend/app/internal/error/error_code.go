@@ -14,6 +14,7 @@ var (
 	ErrLeaveType                    = errors.New("leave type not valid")
 	ErrLeaveRequestHasBeenProcessed = errors.New("leave request has been processed")
 	ErrInvalidApprovalStatus        = errors.New("invalid approval status")
+	ErrInvalidRole                  = errors.New("invalid role")
 
 	// error 500
 	ErrInternalServerError = errors.New("internal server error")
