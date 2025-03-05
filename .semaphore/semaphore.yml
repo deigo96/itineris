@@ -19,4 +19,4 @@ blocks:
             - go build -v .
       prologue:
         commands:
-          - cd backedn
+          - cd backend
