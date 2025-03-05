@@ -17,3 +17,6 @@ blocks:
             - checkout
             - go get ./...
             - go build -v .
+      prologue:
+        commands:
+          - cd backedn
