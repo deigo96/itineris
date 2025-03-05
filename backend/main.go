@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/deigo96/itineris/app"
@@ -17,6 +18,11 @@ func main() {
 		gin.SetMode(gin.ReleaseMode)
 	}
 	r := gin.Default()
+
+	r.Use(func(c *gin.Context) {
+		fmt.Println("🚀 Received Request:", c.Request.Method, c.Request.URL.Path)
+		c.Next()
+	})
 
 	app.HandlePageNotFound(r)
 	app.HandleNoMethod(r)
