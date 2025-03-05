@@ -99,7 +99,7 @@ This is a **simple Leave Request API** that allows employees to request leave, c
   ```
 
 ### 📌 Create Employee
-- **Endpoint:** `POST {{url}}/employees`
+- **Endpoint:** `POST {{url}}/employees/create`
 - **Description:** Just for create account manually.
 - **Headers:**
   ```json
@@ -112,7 +112,7 @@ This is a **simple Leave Request API** that allows employees to request leave, c
   ```json
     {
       "name": "test", //required
-      "nip": "123456789", //required, numeric
+      "nip": "123123123123123123", //required, numeric, mix=18, max=18
       "password": "12345678", //required
       "role": "Staff", //required, (staff or ppk)
       "position": "Staff", //required
@@ -133,6 +133,8 @@ This is a **simple Leave Request API** that allows employees to request leave, c
         "leave_balance": 12,
         "role": "Staff",
         "total_pending_request": 0,
+        "total_leave": 12,
+        "processed_leave": 0,
         "position": "Staff",
         "department": "Human Resource",
         "created_at": "2025-03-03 21:34:29",
