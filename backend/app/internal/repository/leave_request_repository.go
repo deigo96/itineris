@@ -13,6 +13,7 @@ type LeaveRequestRepository interface {
 	UpdateLeaveRequest(context.Context, *gorm.DB, int, *entity.UpdateLeaveRequest) error
 	GetLeaveRequestByID(context.Context, *gorm.DB, int, int, bool) (*entity.LeaveRequest, error)
 	GetLeaveRequests(context.Context, *gorm.DB, bool, int) ([]*entity.LeaveRequest, error)
+	GetRequestByStatus(context.Context, *gorm.DB, int, bool, constant.Status) ([]*entity.LeaveRequest, error)
 	CountPendingRequest(
 		c context.Context, db *gorm.DB, employeeID int, isAdmin bool) int64
 }
@@ -75,6 +76,24 @@ func (r *leaveRequestRepository) GetLeaveRequests(
 	}
 	return leaveRequests, nil
 
+}
+
+func (r *leaveRequestRepository) GetRequestByStatus(
+	c context.Context, db *gorm.DB, employeeID int, isAdmin bool, status constant.Status) ([]*entity.LeaveRequest, error) {
+	var leaveRequests []*entity.LeaveRequest
+
+	if !isAdmin {
+		if err := db.Where("employee_id = ? AND status = ?", employeeID, status).Order("id DESC").Find(&leaveRequests).Error; err != nil {
+			return nil, err
+		}
+		return leaveRequests, nil
+	}
+
+	if err := db.Where("status = ?", status).Order("id DESC").Find(&leaveRequests).Error; err != nil {
+		return nil, err
+	}
+
+	return leaveRequests, nil
 }
 
 func (r *leaveRequestRepository) CountPendingRequest(

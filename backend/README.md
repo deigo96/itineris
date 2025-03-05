@@ -157,22 +157,24 @@ This is a **simple Leave Request API** that allows employees to request leave, c
 - **Response:**
   ```json
     {
-        "code": "2000",
-        "message": "success",
-        "data": {
-            "id": 2,
-            "name": "siahaan",
-            "nip": "1234567",
-            "leave_balance": 12,
-            "role": "Staff",
-            "total_pending_request": 0,
-            "position": "PNS - Staff Backend Developer",
-            "department": "Teknologi Informasi",
-            "created_at": "2025-02-27 16:27:54.401362 +0700 +07",
-            "created_by": "postgres",
-            "updated_at": "2025-02-27 16:27:54.401362 +0700 +07",
-            "updated_by": "postgres"
-        }
+      "code": "2000",
+      "message": "success",
+      "data": {
+        "id": 2,
+        "name": "siahaan",
+        "nip": "1234567",
+        "leave_balance": 5,
+        "role": "Staff",
+        "total_leave": 12,
+        "processed_leave": 2,
+        "total_pending_request": 1,
+        "position": "PNS - Staff Backend Developer",
+        "department": "Teknologi Informasi",
+        "created_at": "2025-02-27 16:27:54",
+        "created_by": "postgres",
+        "updated_at": "2025-02-27 16:27:54",
+        "updated_by": "postgres"
+      }
     }
   ```
 

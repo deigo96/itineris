@@ -65,7 +65,7 @@ func (s *employeeService) CreateEmployee(c *gin.Context, req *model.CreateEmploy
 		return nil, err
 	}
 
-	return employee.ToModel(0), nil
+	return employee.ToModel(0, nil), nil
 }
 
 func (s *employeeService) GetEmployees(c context.Context) ([]model.EmployeeResponse, error) {
@@ -82,7 +82,7 @@ func (s *employeeService) GetEmployees(c context.Context) ([]model.EmployeeRespo
 	for _, user := range users {
 		totalPending := s.leaveRequestRepository.CountPendingRequest(c, s.db, user.ID, true)
 
-		employeeResponse := user.ToModel(int(totalPending))
+		employeeResponse := user.ToModel(int(totalPending), nil)
 		employeeResponses = append(employeeResponses, *employeeResponse)
 	}
 
@@ -100,9 +100,14 @@ func (s *employeeService) GetEmployee(c *gin.Context) (*model.EmployeeResponse, 
 		return nil, err
 	}
 
+	leaveRequest, err := s.leaveRequestRepository.GetLeaveRequests(c, s.db, ctx.IsAdmin(), employee.ID)
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, err
+	}
+
 	totalPending := s.leaveRequestRepository.CountPendingRequest(c, s.db, employee.ID, ctx.IsAdmin())
 
-	return employee.ToModel(int(totalPending)), nil
+	return employee.ToModel(int(totalPending), leaveRequest), nil
 }
 
 func (s *employeeService) GetLeaveType(c *gin.Context) ([]model.LeaveTypeResponse, error) {

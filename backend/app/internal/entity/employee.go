@@ -23,7 +23,20 @@ type Employee struct {
 	UpdatedBy    string
 }
 
-func (u *Employee) ToModel(totalPending int) *model.EmployeeResponse {
+func (u *Employee) ToModel(totalPending int, leave []*LeaveRequest) *model.EmployeeResponse {
+	var totalLeave, processedLeave int32
+	for _, l := range leave {
+		if l.Status == constant.PENDING {
+			totalLeave += int32(l.TotalDays)
+		}
+
+		if l.Status == constant.APPROVED {
+			processedLeave += int32(l.TotalDays)
+		}
+	}
+
+	totalLeave = totalLeave + processedLeave + u.LeaveBalance
+
 	return &model.EmployeeResponse{
 		ID:                  u.ID,
 		Name:                u.Name,
@@ -32,6 +45,8 @@ func (u *Employee) ToModel(totalPending int) *model.EmployeeResponse {
 		LeaveBalance:        u.LeaveBalance,
 		TotalPendingRequest: totalPending,
 		Position:            u.Position,
+		ProcessedLeave:      processedLeave,
+		TotalLeave:          totalLeave,
 		Department:          u.Department,
 		CreatedAt:           u.CreatedAt.Format("2006-01-02 15:04:05"),
 		CreatedBy:           u.CreatedBy,
