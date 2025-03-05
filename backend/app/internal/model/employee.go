@@ -19,7 +19,7 @@ type EmployeeResponse struct {
 
 type CreateEmployeeRequest struct {
 	Name         string `json:"name" validate:"required"`
-	NIP          string `json:"nip" validate:"required,numeric"`
+	NIP          string `json:"nip" validate:"required,numeric,min=18,max=18"`
 	Password     string `json:"password" validate:"required"`
 	Role         string `json:"role" validate:"required"`
 	Position     string `json:"position" validate:"required"`
