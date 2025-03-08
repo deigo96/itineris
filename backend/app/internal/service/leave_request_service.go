@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"sync"
 	"time"
 
 	"github.com/deigo96/itineris/app/config"
@@ -206,6 +207,75 @@ func (s *leaveRequestService) reject(c *gin.Context, leaveRequest *entity.LeaveR
 	return tx.Commit().Error
 }
 
+// func (s *leaveRequestService) GetLeaveRequests(c *gin.Context) ([]model.LeaveRequestResponse, error) {
+// 	user := util.GetContext(c)
+
+// 	responses, err := s.leaveRequestRepository.GetLeaveRequests(c, s.db, user.IsAdmin(), user.ID)
+// 	if err != nil {
+// 		if errors.Is(err, gorm.ErrRecordNotFound) {
+// 			return nil, customError.ErrNotFound
+// 		}
+// 		return nil, err
+// 	}
+
+// 	leaveRequestResponse := make([]model.LeaveRequestResponse, 0)
+// 	var wg sync.WaitGroup
+// 	errChan := make(chan error, 1)
+// 	leaveTypeChan := make(chan entity.LeaveType, 1)
+// 	employeeChan := make(chan entity.Employee, 1)
+
+// 	for _, response := range responses {
+// 		wg.Add(1)
+
+// 		go func() {
+// 			defer wg.Done()
+// 			leaveType, err := s.repository.GetLeaveTypeByID(c, s.db, response.LeaveType)
+// 			if err != nil {
+// 				if errors.Is(err, gorm.ErrRecordNotFound) {
+// 					errChan <- customError.ErrNotFound
+// 					return
+// 				}
+// 				errChan <- err
+// 				return
+// 			}
+// 			leaveTypeChan <- *leaveType
+// 		}()
+
+// 		go func() {
+// 			defer wg.Done()
+// 			employee, err := s.employeeRepository.GetEmployeeByID(c, s.db, response.EmployeeID)
+// 			if err != nil {
+// 				if errors.Is(err, gorm.ErrRecordNotFound) {
+// 					errChan <- customError.ErrNotFound
+// 					return
+// 				}
+// 				errChan <- err
+// 				return
+// 			}
+// 			employeeChan <- *employee
+// 		}()
+
+// 	}
+
+// 	wg.Wait()
+// 	close(errChan)
+
+// 	for _, response := range responses {
+// 		leaveType := <-leaveTypeChan
+// 		employee := <-employeeChan
+// 		res := response.ToModel(leaveType.TypeName)
+// 		res.EmployeeName = employee.Name
+// 		leaveRequestResponse = append(leaveRequestResponse, *res)
+// 	}
+
+// 	for err := range errChan {
+// 		if err != nil {
+// 			return nil, err
+// 		}
+// 	}
+// 	return leaveRequestResponse, nil
+// }
+
 func (s *leaveRequestService) GetLeaveRequests(c *gin.Context) ([]model.LeaveRequestResponse, error) {
 	user := util.GetContext(c)
 
@@ -217,28 +287,61 @@ func (s *leaveRequestService) GetLeaveRequests(c *gin.Context) ([]model.LeaveReq
 		return nil, err
 	}
 
-	leaveRequestResponse := make([]model.LeaveRequestResponse, 0)
+	leaveRequestResponse := make([]model.LeaveRequestResponse, 0, len(responses))
+	var wg sync.WaitGroup
+	leaveTypeChan := make(chan entity.LeaveType, len(responses))
+	employeeChan := make(chan entity.Employee, len(responses))
 
-	for _, response := range responses {
-		leaveType, err := s.repository.GetLeaveTypeByID(c, s.db, response.LeaveType)
-		if err != nil {
-			if errors.Is(err, gorm.ErrRecordNotFound) {
-				return nil, customError.ErrNotFound
+	var mu sync.Mutex
+	var finalErr error
+
+	for _, resp := range responses {
+		resp := resp
+
+		wg.Add(2)
+
+		go func() {
+			defer wg.Done()
+			leaveType, err := s.repository.GetLeaveTypeByID(c, s.db, resp.LeaveType)
+			if err != nil {
+				mu.Lock()
+				if finalErr == nil {
+					finalErr = err
+				}
+				mu.Unlock()
+				return
 			}
-			return nil, err
-		}
+			leaveTypeChan <- *leaveType
+		}()
 
-		employee, err := s.employeeRepository.GetEmployeeByID(c, s.db, response.EmployeeID)
-		if err != nil {
-			if errors.Is(err, gorm.ErrRecordNotFound) {
-				return nil, customError.ErrNotFound
+		go func() {
+			defer wg.Done()
+			employee, err := s.employeeRepository.GetEmployeeByID(c, s.db, resp.EmployeeID)
+			if err != nil {
+				mu.Lock()
+				if finalErr == nil {
+					finalErr = err
+				}
+				mu.Unlock()
+				return
 			}
-			return nil, err
-		}
+			employeeChan <- *employee
+		}()
+	}
 
-		res := response.ToModel(leaveType.TypeName)
+	wg.Wait()
+	close(leaveTypeChan)
+	close(employeeChan)
+
+	if finalErr != nil {
+		return nil, finalErr
+	}
+
+	for _, resp := range responses {
+		leaveType := <-leaveTypeChan
+		employee := <-employeeChan
+		res := resp.ToModel(leaveType.TypeName)
 		res.EmployeeName = employee.Name
-
 		leaveRequestResponse = append(leaveRequestResponse, *res)
 	}
 
