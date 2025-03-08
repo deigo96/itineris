@@ -227,7 +227,17 @@ func (s *leaveRequestService) GetLeaveRequests(c *gin.Context) ([]model.LeaveReq
 			}
 			return nil, err
 		}
+
+		employee, err := s.employeeRepository.GetEmployeeByID(c, s.db, response.EmployeeID)
+		if err != nil {
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				return nil, customError.ErrNotFound
+			}
+			return nil, err
+		}
+
 		res := response.ToModel(leaveType.TypeName)
+		res.EmployeeName = employee.Name
 
 		leaveRequestResponse = append(leaveRequestResponse, *res)
 	}
@@ -254,5 +264,16 @@ func (s *leaveRequestService) GetLeaveRequest(c *gin.Context, id int) (*model.Le
 		return nil, err
 	}
 
-	return response.ToModel(leaveType.TypeName), nil
+	employee, err := s.employeeRepository.GetEmployeeByID(c, s.db, response.EmployeeID)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, customError.ErrNotFound
+		}
+		return nil, err
+	}
+
+	res := response.ToModel(leaveType.TypeName)
+	res.EmployeeName = employee.Name
+
+	return res, nil
 }

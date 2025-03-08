@@ -14,6 +14,7 @@ type LeaveRequestRequest struct {
 type LeaveRequestResponse struct {
 	ID            int    `json:"id"`
 	EmployeeID    int    `json:"employee_id"`
+	EmployeeName  string `json:"employee_name"`
 	Status        string `json:"status"`
 	StartDate     string `json:"start_date"`
 	EndDate       string `json:"end_date"`
